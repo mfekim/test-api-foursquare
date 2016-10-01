@@ -2,6 +2,7 @@ package mfekim.testapifoursquare.app.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.TextUtils;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -42,6 +43,12 @@ public class MFVenue implements Parcelable {
     private MFVenue(Parcel in) {
         mId = in.readString();
         mName = in.readString();
+    }
+    //endregion
+
+    //region Special Getters
+    public String optName(String defaultValue) {
+        return TextUtils.isEmpty(mName) ? defaultValue : mName;
     }
     //endregion
 }

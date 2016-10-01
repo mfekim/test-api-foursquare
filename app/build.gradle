@@ -31,4 +31,6 @@ dependencies {
     compile 'com.android.volley:volley:1.0.0'
     // Gson
     compile 'com.google.code.gson:gson:2.4'
+    // Recycler view
+    compile 'com.android.support:recyclerview-v7:24.2.1'
 }

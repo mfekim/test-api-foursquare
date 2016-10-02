@@ -62,4 +62,10 @@ public class MFVenueLocation implements Parcelable {
         return TextUtils.isEmpty(mAddress) ? defaultValue : mAddress;
     }
     //endregion
+
+    //region Getters
+    public Long getDistance() {
+        return mDistance;
+    }
+    //endregion
 }

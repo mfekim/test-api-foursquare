@@ -14,6 +14,6 @@
     <string name="mf_details_venue_address_pattern">Adresse : %1$s</string>
     <string name="mf_details_venue_phone_pattern">Téléphone : %1$s</string>
     <string name="mf_details_venue_twitter_pattern">Twitter : %1$s</string>
-    <string name="mf_details_venue_rating_pattern">Note : %1$s sur 10</string>
+    <string name="mf_details_venue_rating_pattern">Note : %1$f sur 10</string>
 
 </resources>

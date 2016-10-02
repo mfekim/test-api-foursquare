@@ -11,6 +11,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import mfekim.testapifoursquare.app.MFBaseFragment;
@@ -106,8 +108,9 @@ public class MFVenueListFragment extends MFBaseFragment {
         // you provide access to all the views for a data item in a view holder
         class ViewHolder extends RecyclerView.ViewHolder {
             /** Views. */
-            TextView tvName;
-            View vDivider;
+            TextView mTvName;
+            TextView mTvDistance;
+            View mVDivider;
 
             /**
              * Constructor.
@@ -116,8 +119,9 @@ public class MFVenueListFragment extends MFBaseFragment {
              */
             ViewHolder(View itemView) {
                 super(itemView);
-                tvName = (TextView) itemView.findViewById(R.id.item_list_venue_name);
-                vDivider = itemView.findViewById(R.id.item_list_venue_divider);
+                mTvName = (TextView) itemView.findViewById(R.id.item_list_venue_name);
+                mTvDistance = (TextView) itemView.findViewById(R.id.item_list_venue_distance);
+                mVDivider = itemView.findViewById(R.id.item_list_venue_divider);
 
                 // Click
                 itemView.setOnClickListener(new View.OnClickListener() {
@@ -137,6 +141,19 @@ public class MFVenueListFragment extends MFBaseFragment {
          */
         MFVenueListAdapter(List<MFVenue> venues) {
             mItems = venues;
+            // Sort items by distance
+            Collections.sort(mItems, new Comparator<MFVenue>() {
+                @Override
+                public int compare(MFVenue o1, MFVenue o2) {
+                    Long d1 = o1.getDistance();
+                    Long d2 = o2.getDistance();
+                    if (d1 != null && d2 != null) {
+                        return d1.compareTo(d2);
+                    }
+
+                    return 0;
+                }
+            });
         }
 
         @Override
@@ -148,16 +165,33 @@ public class MFVenueListFragment extends MFBaseFragment {
 
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
+            MFVenue venue = mItems.get(position);
             // Name
-            holder.tvName.setText(mItems.get(position).optName("-"));
+            holder.mTvName.setText(venue.optName("-"));
+            // Distance
+            Long distance = venue.getDistance();
+            holder.mTvDistance.setText(distance != null ? formatDistance(distance) : "");
+            holder.mTvDistance.setVisibility(distance != null ? View.VISIBLE : View.GONE);
             // Divider visibility
-            holder.vDivider.setVisibility(position == getItemCount() - 1 ?
+            holder.mVDivider.setVisibility(position == getItemCount() - 1 ?
                     View.INVISIBLE : View.VISIBLE);
         }
 
         @Override
         public int getItemCount() {
             return mItems != null ? mItems.size() : 0;
+        }
+
+        /**
+         * Formats the distance to display it in kilometer or meter.
+         *
+         * @param distanceInMeter A distance in meter.
+         * @return A formatted distance.
+         */
+        private String formatDistance(long distanceInMeter) {
+            long distanceInKilometer = distanceInMeter / 1000;
+            return distanceInKilometer > 0 ? String.valueOf(distanceInKilometer + " km") :
+                    String.valueOf(distanceInMeter + " m");
         }
     }
 }

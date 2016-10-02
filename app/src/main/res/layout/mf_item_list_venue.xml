@@ -9,13 +9,36 @@
     android:clickable="true"
     android:orientation="vertical">
 
-    <!-- Name -->
-    <TextView
-        android:id="@+id/item_list_venue_name"
+    <!-- Main -->
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="15dp"
-        tools:text="Koolicar - partage et confiance"/>
+        android:paddingBottom="10dp"
+        android:paddingEnd="15dp"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:paddingStart="15dp"
+        android:paddingTop="10dp">
+
+        <!-- Name -->
+        <TextView
+            android:id="@+id/item_list_venue_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="Koolicar - partage et confiance"/>
+
+        <!-- Distance -->
+        <TextView
+            android:id="@+id/item_list_venue_distance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/item_list_venue_name"
+            android:layout_marginTop="5dp"
+            tools:text="56 km"/>
+
+    </RelativeLayout>
 
     <!-- Divider -->
     <View

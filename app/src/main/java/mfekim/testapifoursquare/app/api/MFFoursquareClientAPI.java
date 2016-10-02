@@ -20,7 +20,7 @@ import mfekim.testapifoursquare.app.model.venue.MFVenue;
 import mfekim.testapifoursquare.app.network.MFNetworkClient;
 
 /**
- * The unique client to interact with the Foursquare API.
+ * A client to interact with the Foursquare API.
  */
 public class MFFoursquareClientAPI {
     /** Tag for logs. */
@@ -144,6 +144,8 @@ public class MFFoursquareClientAPI {
                     new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
+                            Log.e(TAG, "Get venue details succeded");
+
                             MFVenue venue = null;
                             if (response != null && response.has("response") &&
                                     response.optJSONObject("response").has("venue")) {
@@ -164,8 +166,7 @@ public class MFFoursquareClientAPI {
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            // TODO
-
+                            Log.e(TAG, "Get venue details failed - " + error.getLocalizedMessage());
                             // Listener
                             if (errorListener != null) {
                                 errorListener.onErrorResponse(error);
@@ -174,19 +175,27 @@ public class MFFoursquareClientAPI {
                     });
             MFNetworkClient.getInstance().addToRequestQueue(context, request);
         } else {
-            Log.e(TAG, "Failed to get the venue details - venue id null/empty");
-            // TODO
+            Log.e(TAG, "Get venue details failed - venue id null/empty");
+            // Listener
+            if (errorListener != null) {
+                errorListener.onErrorResponse(null);
+            }
         }
     }
 
     /**
-     * Adds required parameters to a foursquare url.
+     * Adds the required parameters to a foursquare url.
      *
      * @param foursquareUrl A foursquare url.
      * @return A foursquare url with the required parameters.
      */
     private String addRequiredParameters(String foursquareUrl) {
-        return foursquareUrl + "?client_id=" + CLIENT_ID + "&client_secret=" + CLIENT_SECRET
-                + "&v=20161001";
+        if (!TextUtils.isEmpty(foursquareUrl)) {
+            return foursquareUrl + "?client_id=" + CLIENT_ID + "&client_secret=" + CLIENT_SECRET
+                    + "&v=20161001";
+        }
+
+        Log.e(TAG, "Failed to add the required parameters - url null/empty");
+        return foursquareUrl;
     }
 }

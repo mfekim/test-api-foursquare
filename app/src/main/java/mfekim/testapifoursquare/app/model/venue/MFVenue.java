@@ -108,6 +108,10 @@ public class MFVenue implements Parcelable {
         return mRating;
     }
 
+    public Long getDistance() {
+        return mLocation != null ? mLocation.getDistance() : null;
+    }
+
     /**
      * Gets the best photo url.
      *

@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"/>
 
-    <!-- -->
+    <!-- Fragment Container -->
     <FrameLayout
         android:id="@+id/list_venue_container"
         android:layout_width="match_parent"

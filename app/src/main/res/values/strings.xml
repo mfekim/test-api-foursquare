@@ -1,3 +1,13 @@
 <resources>
-    <string name="app_name">Test API Foursquare</string>
+
+    <!-- General -->
+    <string name="mf_app_name">Test API Foursquare</string>
+    <string name="mf_no_internet_connection_dialog_title">Connexion Internet introuvable</string>
+    <string name="mf_try_again">Reéssayer</string>
+    <string name="mf_exit">Quitter</string>
+
+    <!-- List Venue -->
+    <string name="mf_list_venue_no_internet_connection_dialog_message">Veuillez activer votre connexion Internet puis relancer l\'application.</string>
+    <string name="mf_list_venue_error_dialog_message">Une erreur s\'est produite lors de la recherche. Veuillez réessayer.</string>
+
 </resources>

@@ -15,7 +15,8 @@ import java.util.List;
 
 import mfekim.testapifoursquare.app.MFBaseFragment;
 import mfekim.testapifoursquare.app.R;
-import mfekim.testapifoursquare.app.model.MFVenue;
+import mfekim.testapifoursquare.app.model.venue.MFVenue;
+import mfekim.testapifoursquare.app.venues.details.MFVenueDetailsActivity;
 
 /**
  * Shows a list of venues.
@@ -122,7 +123,8 @@ public class MFVenueListFragment extends MFBaseFragment {
                 itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        // TODO
+                        MFVenue venue = mItems.get(getAdapterPosition());
+                        MFVenueDetailsActivity.launchActivity(getActivity(), venue.getId());
                     }
                 });
             }

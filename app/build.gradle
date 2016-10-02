@@ -33,4 +33,6 @@ dependencies {
     compile 'com.google.code.gson:gson:2.4'
     // Recycler view
     compile 'com.android.support:recyclerview-v7:24.2.1'
+    // Image downloading library (https://github.com/square/picasso/releases)
+    compile 'com.squareup.picasso:picasso:2.5.2'
 }

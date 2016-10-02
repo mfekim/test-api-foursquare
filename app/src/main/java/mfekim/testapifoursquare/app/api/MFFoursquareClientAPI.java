@@ -1,6 +1,7 @@
 package mfekim.testapifoursquare.app.api;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.android.volley.Response;
@@ -15,7 +16,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import mfekim.testapifoursquare.app.model.MFVenue;
+import mfekim.testapifoursquare.app.model.venue.MFVenue;
 import mfekim.testapifoursquare.app.network.MFNetworkClient;
 
 /**
@@ -33,6 +34,7 @@ public class MFFoursquareClientAPI {
 
     /* List of urls. */
     private final String SEARCH_VENUES_URL = "https://api.foursquare.com/v2/venues/search";
+    private final String VENUE_DETAILS_URL = "https://api.foursquare.com/v2/venues";
 
     /** List of categories id. */
     private final String FOOD_CATEGORY_ID = "4d4b7105d754a06374d81259";
@@ -73,7 +75,7 @@ public class MFFoursquareClientAPI {
                                  final Response.Listener<List<MFVenue>> listener,
                                  final Response.ErrorListener errorListener) {
         // Build the url
-        String url = prepareUrl(SEARCH_VENUES_URL);
+        String url = addRequiredParameters(SEARCH_VENUES_URL);
         url += "&ll=" + latitude + "," + longitude;
         url += "&categoryId=" + FOOD_CATEGORY_ID;
         url += "&limit=" + limit;
@@ -121,12 +123,69 @@ public class MFFoursquareClientAPI {
     }
 
     /**
-     * Prepares a foursquare url by adding the required client parameters.
+     * Retrieves the details of a venue.
+     *
+     * @param context       A context.
+     * @param venueId       A venue id.
+     * @param listener      A listener.
+     * @param errorListener An error listener.
+     */
+    public void getVenueDetails(Context context, String venueId,
+                                final Response.Listener<MFVenue> listener,
+                                final Response.ErrorListener errorListener) {
+        if (!TextUtils.isEmpty(venueId)) {
+            // Build the url
+            String url = VENUE_DETAILS_URL + "/" + venueId + "/";
+            url = addRequiredParameters(url);
+            Log.d(TAG, "Venue details URL: " + url);
+
+            // Build and execute the request
+            JsonObjectRequest request = new JsonObjectRequest(url, null,
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            MFVenue venue = null;
+                            if (response != null && response.has("response") &&
+                                    response.optJSONObject("response").has("venue")) {
+                                JSONObject venueJSON = response.optJSONObject("response")
+                                                               .optJSONObject("venue");
+                                // Parse json to venue object
+                                venue = GSON.fromJson(venueJSON.toString(), MFVenue.class);
+                            } else {
+                                Log.e(TAG, "No venue found");
+                            }
+
+                            // Listener
+                            if (listener != null) {
+                                listener.onResponse(venue);
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            // TODO
+
+                            // Listener
+                            if (errorListener != null) {
+                                errorListener.onErrorResponse(error);
+                            }
+                        }
+                    });
+            MFNetworkClient.getInstance().addToRequestQueue(context, request);
+        } else {
+            Log.e(TAG, "Failed to get the venue details - venue id null/empty");
+            // TODO
+        }
+    }
+
+    /**
+     * Adds required parameters to a foursquare url.
      *
      * @param foursquareUrl A foursquare url.
-     * @return A ready to use foursquare url.
+     * @return A foursquare url with the required parameters.
      */
-    private String prepareUrl(String foursquareUrl) {
+    private String addRequiredParameters(String foursquareUrl) {
         return foursquareUrl + "?client_id=" + CLIENT_ID + "&client_secret=" + CLIENT_SECRET
                 + "&v=20161001";
     }

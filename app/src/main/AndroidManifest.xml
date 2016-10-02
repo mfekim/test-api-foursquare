@@ -22,6 +22,8 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".venues.details.MFVenueDetailsActivity"/>
+
     </application>
 
 </manifest>

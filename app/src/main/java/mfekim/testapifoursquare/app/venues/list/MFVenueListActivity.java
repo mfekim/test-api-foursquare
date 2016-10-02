@@ -15,7 +15,7 @@ import java.util.List;
 import mfekim.testapifoursquare.app.MFBaseActivity;
 import mfekim.testapifoursquare.app.R;
 import mfekim.testapifoursquare.app.api.MFFoursquareClientAPI;
-import mfekim.testapifoursquare.app.model.MFVenue;
+import mfekim.testapifoursquare.app.model.venue.MFVenue;
 import mfekim.testapifoursquare.app.network.MFConnectivityUtils;
 
 /**

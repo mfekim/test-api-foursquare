@@ -1,7 +1,9 @@
 package mfekim.testapifoursquare.app.venues.details;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -91,6 +93,19 @@ public class MFVenueDetailsFragment extends MFBaseFragment {
         mTvRating = (TextView) view.findViewById(R.id.venue_rating);
 
         // Retrieve details of the venue
+        getVenueDetails();
+    }
+
+    @Override
+    public void onPause() {
+        MFFoursquareClientAPI.getInstance().cancelAllRequests(mAppContext);
+        super.onPause();
+    }
+
+    /**
+     * Retrieves the details of a venue.
+     */
+    private void getVenueDetails() {
         if (!TextUtils.isEmpty(mVenueId)) {
             MFFoursquareClientAPI.getInstance().getVenueDetails(mAppContext, mVenueId,
                     new Response.Listener<MFVenue>() {
@@ -102,18 +117,13 @@ public class MFVenueDetailsFragment extends MFBaseFragment {
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            // TODO
+                            showErrorDialog();
                         }
                     });
         } else {
-            // TODO
+            Log.e(TAG, "Failed to get venue details - venue id null/empty");
+            showErrorDialog();
         }
-    }
-
-    @Override
-    public void onPause() {
-        MFFoursquareClientAPI.getInstance().cancelAllRequests(mAppContext);
-        super.onPause();
     }
 
     /**
@@ -180,7 +190,29 @@ public class MFVenueDetailsFragment extends MFBaseFragment {
                 mTvRating.setVisibility(View.GONE);
             }
         } else {
-            // TODO
+            showErrorDialog();
         }
+    }
+
+    /**
+     * Shows a dialog to inform that an error appeared.
+     */
+    private void showErrorDialog() {
+        new AlertDialog.Builder(getActivity())
+                .setMessage(R.string.mf_details_venue_error_dialog_message)
+                .setPositiveButton(R.string.mf_try_again, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        getVenueDetails();
+                    }
+                })
+                .setNegativeButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        getActivity().onBackPressed();
+                    }
+                })
+                .create()
+                .show();
     }
 }

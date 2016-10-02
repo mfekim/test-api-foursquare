@@ -15,5 +15,6 @@
     <string name="mf_details_venue_phone_pattern">Téléphone : %1$s</string>
     <string name="mf_details_venue_twitter_pattern">Twitter : %1$s</string>
     <string name="mf_details_venue_rating_pattern">Note : %1$f sur 10</string>
+    <string name="mf_details_venue_error_dialog_message">Une erreur s\'est produite lors de la récupération des données. Veuillez réessayer.</string>
 
 </resources>

@@ -8,7 +8,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -33,11 +32,14 @@ public class MFFoursquareClientAPI {
     private final String CLIENT_SECRET = "UQ4OMPWFHT0S4G0O4TW5YOQMV4FXZ3MX0XOPV0NBL23N0VKS";
 
     /* List of urls. */
-    private final String SEARCH_VENUES_URL = "https://api.foursquare.com/v2/venues/search";
+    private final String SEARCH_VENUES_URL = "https://api.foursquare.com/v2/venues/explore";
     private final String VENUE_DETAILS_URL = "https://api.foursquare.com/v2/venues";
 
     /** List of categories id. */
     private final String FOOD_CATEGORY_ID = "4d4b7105d754a06374d81259";
+
+    /** Needed to cancel request. */
+    private final String REQUEST_TAG = "foursquare_request";
 
     /** Gson instance. */
     private final Gson GSON = new Gson();
@@ -91,13 +93,21 @@ public class MFFoursquareClientAPI {
                         // Retrieves venues
                         List<MFVenue> venues = null;
                         if (response != null && response.has("response") &&
-                                response.optJSONObject("response").has("venues")) {
-                            JSONArray venuesJSONArray = response.optJSONObject("response")
-                                                                .optJSONArray("venues");
+                                response.optJSONObject("response").has("groups") &&
+                                response.optJSONObject("response").optJSONArray("groups").length() > 0) {
+                            JSONArray itemsJSONArray = response.optJSONObject("response")
+                                                               .optJSONArray("groups")
+                                                               .optJSONObject(0)
+                                                               .optJSONArray("items");
                             // Parse json array to a list
-                            venues = GSON.fromJson(venuesJSONArray.toString(),
-                                    new TypeToken<ArrayList<MFVenue>>() {
-                                    }.getType());
+                            if (itemsJSONArray != null) {
+                                venues = new ArrayList<>(itemsJSONArray.length());
+                                for (int i = 0; i < itemsJSONArray.length(); i++) {
+                                    JSONObject venueJSON =
+                                            itemsJSONArray.optJSONObject(i).optJSONObject("venue");
+                                    venues.add(GSON.fromJson(venueJSON.toString(), MFVenue.class));
+                                }
+                            }
                         } else {
                             Log.e(TAG, "No venues found");
                         }
@@ -119,6 +129,7 @@ public class MFFoursquareClientAPI {
                         }
                     }
                 });
+        request.setTag(REQUEST_TAG);
         MFNetworkClient.getInstance().addToRequestQueue(context, request);
     }
 
@@ -173,6 +184,7 @@ public class MFFoursquareClientAPI {
                             }
                         }
                     });
+            request.setTag(REQUEST_TAG);
             MFNetworkClient.getInstance().addToRequestQueue(context, request);
         } else {
             Log.e(TAG, "Get venue details failed - venue id null/empty");
@@ -181,6 +193,15 @@ public class MFFoursquareClientAPI {
                 errorListener.onErrorResponse(null);
             }
         }
+    }
+
+    /**
+     * Cancels all requests.
+     *
+     * @param context A context.
+     */
+    public void cancelAllRequests(Context context) {
+        MFNetworkClient.getInstance().cancelAllRequest(context, REQUEST_TAG);
     }
 
     /**

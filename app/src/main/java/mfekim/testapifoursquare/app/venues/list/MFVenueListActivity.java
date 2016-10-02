@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.View;
 
 import com.android.volley.Response;
@@ -50,6 +51,12 @@ public class MFVenueListActivity extends MFBaseActivity {
         searchFoodVenues();
     }
 
+    @Override
+    protected void onPause() {
+        MFFoursquareClientAPI.getInstance().cancelAllRequests(mAppContext);
+        super.onPause();
+    }
+
     /**
      * Searches food venues.
      */
@@ -63,14 +70,19 @@ public class MFVenueListActivity extends MFBaseActivity {
                     new Response.Listener<List<MFVenue>>() {
                         @Override
                         public void onResponse(List<MFVenue> response) {
-                            // Add fragment
-                            Fragment fragment = MFVenueListFragment.newInstance(new ArrayList<>(response));
-                            getSupportFragmentManager()
-                                    .beginTransaction()
-                                    .replace(R.id.list_venue_container, fragment, VENUE_LIST_FRAGMENT_TAG)
-                                    .commit();
-                            // Hide loader
-                            mVLoader.setVisibility(View.INVISIBLE);
+                            if (response != null) {
+                                // Add fragment
+                                Fragment fragment = MFVenueListFragment.newInstance(new ArrayList<>(response));
+                                getSupportFragmentManager()
+                                        .beginTransaction()
+                                        .replace(R.id.list_venue_container, fragment, VENUE_LIST_FRAGMENT_TAG)
+                                        .commit();
+                                // Hide loader
+                                mVLoader.setVisibility(View.INVISIBLE);
+                            } else {
+                                Log.e(TAG, "List of venues null");
+                                showErrorDialog();
+                            }
                         }
                     },
                     new Response.ErrorListener() {

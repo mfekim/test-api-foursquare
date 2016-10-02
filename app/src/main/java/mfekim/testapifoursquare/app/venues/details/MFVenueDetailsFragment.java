@@ -110,6 +110,12 @@ public class MFVenueDetailsFragment extends MFBaseFragment {
         }
     }
 
+    @Override
+    public void onPause() {
+        MFFoursquareClientAPI.getInstance().cancelAllRequests(mAppContext);
+        super.onPause();
+    }
+
     /**
      * Binds data.
      *

@@ -75,7 +75,7 @@ public class MFFoursquareClientAPI {
         // Build the url
         String url = prepareUrl(SEARCH_VENUES_URL);
         url += "&ll=" + latitude + "," + longitude;
-        url += "&categorieId=" + FOOD_CATEGORY_ID;
+        url += "&categoryId=" + FOOD_CATEGORY_ID;
         url += "&limit=" + limit;
         Log.d(TAG, "Search food venues URL: " + url);
 
